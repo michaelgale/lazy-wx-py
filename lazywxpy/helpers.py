@@ -23,6 +23,7 @@
 #
 # Helper functions
 
+import wx
 from metayaml import read
 
 
@@ -32,6 +33,30 @@ def apply_attr(key, d, attr, default):
         if attr in d[key]:
             v = d[key][attr]
     return v
+
+def flags_from_dict(d):
+    f = 0
+    for k, v in d.items():
+        key = k.replace("-", "_")
+        if "vert_align" in key:
+            if v in ["centre", "center"]:
+                f = f | wx.ALIGN_CENTER_VERTICAL
+            elif "top" in v:
+                f = f | wx.ALIGN_TOP
+            elif "bottom" in v:
+                f = f | wx.ALIGN_BOTTOM
+            elif "expand" in v:
+                f = f | wx.EXPAND
+        elif "horz_align" in key:
+            if v in ["centre", "center"]:
+                f = f | wx.ALIGN_CENTER_HORIZONTAL
+            elif "right" in v:
+                f = f | wx.ALIGN_RIGHT
+            elif "left" in v:
+                f = f | wx.ALIGN_LEFT
+            elif "expand" in v:
+                f = f | wx.EXPAND
+    return f
 
 
 class YamlDict(dict):

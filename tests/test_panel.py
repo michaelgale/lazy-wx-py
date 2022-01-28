@@ -25,19 +25,19 @@ class TestLazyPanel(unittest.TestCase):
         # version_panel has 3 named widgets
         assert len(p2.__dict__) == 3
         # 2 of the widgets are in sub list
-        assert "version_title" in p2.__dict__
-        assert isinstance(p2.version_title, wx._core.StaticText)
-        assert "restore_button" in p2.__dict__
-        assert isinstance(p2.restore_button, wx._core.Button)
-        assert p2.__dict__["check_button"] is p2.check_button
-        assert isinstance(p2.check_button, wx._core.Button)
+        assert "version_panel_check_button" in p2.__dict__
+        assert isinstance(p2.version_panel_version_title, wx._core.StaticText)
+        assert "version_panel_restore_button" in p2.__dict__
+        assert isinstance(p2.version_panel_restore_button, wx._core.Button)
+        assert p2.__dict__["version_panel_check_button"] is p2.version_panel_check_button
+        assert isinstance(p2.version_panel_check_button, wx._core.Button)
 
         p3 = LazyPanel(self.p, "test_data.yml", "settings_panel")
         # settings_panel has 2 named widgets, both inherited
-        assert "alc_checkbox" in p3.__dict__
-        assert "button_ir" in p3.__dict__
-        assert isinstance(p3.alc_checkbox, wx._core.CheckBox)
-        assert isinstance(p3.button_ir, wx._core.Button)
+        assert "col1_box_alc_checkbox" in p3.__dict__
+        assert "col3_button_ir" in p3.__dict__
+        assert isinstance(p3.col1_box_alc_checkbox, wx._core.CheckBox)
+        assert isinstance(p3.col3_button_ir, wx._core.Button)
 
 
 if __name__ == "__main__":

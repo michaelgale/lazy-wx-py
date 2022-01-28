@@ -15,7 +15,7 @@ def test_widgets():
     d = YamlDict(yml="test_data.yml")
     assert "widgets" in d
     pd = d["widgets"]
-    assert len(pd) == 11
+    assert len(pd) == 10
     assert "brick_title" in pd
     assert "root" not in pd
 

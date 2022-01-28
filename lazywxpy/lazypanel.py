@@ -25,7 +25,7 @@
 
 import wx
 
-from .helpers import apply_attr, YamlDict
+from .helpers import apply_attr, YamlDict, flags_from_dict
 
 
 class LazyPanel(wx.Panel):
@@ -59,29 +59,42 @@ class LazyPanel(wx.Panel):
 
 def layout_panel(parent, layout, root, objs):
     elem = layout["widgets"]
+    if root not in layout["panels"]:
+        raise KeyError("panel with name %s not in panels" % (root))
+    panel = layout["panels"][root]
     default_padding = 1
     if "box" in root:
-        name = apply_attr(root, elem, "label", root)
+        if "label" in panel:
+            name = panel["label"]
+        else:
+            name = root
         root_sizer = wx.StaticBoxSizer(wx.VERTICAL, parent, name)
     else:
         root_sizer = wx.BoxSizer(wx.VERTICAL)
-    if root not in layout["panels"]:
-        raise KeyError("panel with name %s not in panels" % (root))
-    rows = layout["panels"][root]
+    w, h = -1, -1
+    if "height" in panel:
+        h = panel["height"]
+    if "width" in panel:
+        w = panel["width"]
+    root_sizer.SetMinSize((w, h))
+    rows = panel["rows"]
     for r in rows:
         row_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        is_single = False
         if not isinstance(r, list):
             row = [r]
+            is_single = True
         else:
             row = r
         max_rows = 1
         for c in row:
+            flags = 0
+            padding = apply_attr(c, elem, "padding", default_padding)
             if c in layout["panels"]:
                 el, objs = layout_panel(parent, layout, c, objs)
                 max_rows = max(max_rows, len(c))
             else:
                 label = apply_attr(c, elem, "label", c)
-                padding = apply_attr(c, elem, "padding", default_padding)
                 width = apply_attr(c, elem, "width", -1)
                 height = apply_attr(c, elem, "height", -1)
                 size = wx.Size(width, height)
@@ -96,7 +109,7 @@ def layout_panel(parent, layout, root, objs):
                 elif "radio" in c:
                     el = wx.RadioButton(parent, -1, label)
                 elif "spacer" in c:
-                    el = wx.StaticText(parent, -1, " ")
+                    el = wx.StaticText(parent, -1, "")
                 elif "checkbox" in c:
                     el = wx.CheckBox(parent, -1, label)
                 elif "title" in c:
@@ -117,8 +130,21 @@ def layout_panel(parent, layout, root, objs):
                     el = wx.StaticText(parent, -1, label)
                 if width > 0 or height > 0:
                     el.SetMinSize((width, height))
+                if c in elem:                    
+                    objs["%s_%s" % (root, c)] = el
+            if c in layout["panels"]:
+                flags = flags_from_dict(layout["panels"][c])
+            if is_single:
                 if c in elem:
-                    objs[c] = el
-            row_sizer.Add(el, 1, wx.ALL | wx.TOP, padding)
-        root_sizer.Add(row_sizer, max_rows, wx.TOP)
+                    opts = flags_from_dict(elem[c])
+                else:
+                    opts = 0
+                if opts & wx.ALIGN_RIGHT or opts & wx.ALIGN_CENTER_HORIZONTAL:
+                    row_sizer.AddStretchSpacer(1)
+                row_sizer.Add(el, 1, flags, padding)
+                if not opts & wx.ALIGN_RIGHT or opts & wx.ALIGN_CENTER_HORIZONTAL:
+                    row_sizer.AddStretchSpacer(1)
+            else:                
+                row_sizer.Add(el, 1, flags, padding)
+        root_sizer.Add(row_sizer, max_rows, wx.EXPAND)
     return root_sizer, objs

@@ -28,48 +28,55 @@ widgets:
     width: 100
   alc_checkbox:
     label: "Auto level control"
-  col1_box:
-    label: "Radio Box Items"
 
 panels:
   version_panel:
-    - version_title
-    - version_text
-    - [check_button, restore_button]
-    - spacer
+    rows:
+      - version_title
+      - version_text
+      - [check_button, restore_button]
+      - spacer
   capacity_panel:
-    - name_edit
-    - [capacity_bold, capacity]
-    - [available_bold, available]
-    - [serial_bold, serial]
-    - spacer
-    - alc_checkbox
+    rows:
+      - name_edit
+      - [capacity_bold, capacity]
+      - [available_bold, available]
+      - [serial_bold, serial]
+      - spacer
+      - alc_checkbox
   col1_box:
-    - radio_item1
-    - radio_item2
-    - radio_item3
-    - alc_checkbox
+    label: Radio Box Items
+    rows:
+      - radio_item1
+      - radio_item2
+      - radio_item3
+      - alc_checkbox
   col2:
-    - col_title
-    - other1
-    - other2
-    - other_slider
+    height: 400
+    rows:
+      - col_title
+      - other1
+      - other2
+      - other_slider
   col3:
-    - col_title
-    - other1
-    - other2
-    - other_slider
-    - button_ir
+    rows:
+      - col_title
+      - other1
+      - other2
+      - other_slider
+      - button_ir
   settings_panel:
-    - [spacer, col1_box, spacer, col3, spacer]
+    rows:
+      - [spacer, col1_box, spacer, col3, spacer]
   root:
-    - brick_title
-    - [brick_image, capacity_panel, version_panel, spacer]
-    - settings_title
-    - settings_panel
-    - audio_title
-    - spacer
-    - spacer
+    rows:
+      - brick_title
+      - [brick_image, capacity_panel, version_panel, spacer]
+      - settings_title
+      - settings_panel
+      - audio_title
+      - spacer
+      - spacer
 
 notebooks:
   root:
